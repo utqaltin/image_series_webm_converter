@@ -55,17 +55,17 @@ You have two options:
     sudo apt-get install ffmpeg
     ```
     
-    - **Arch:**
+  - **Arch:**
 
-    ```bash
-    sudo pacman -S ffmpeg
-    ```
+   ```bash
+   sudo pacman -S ffmpeg
+   ```
 
-    - **Fedora:**
+  - **Fedora:**
 
-    ```bash
-    sudo dnf install ffmpeg
-    ```
+   ```bash
+   sudo dnf install ffmpeg
+   ```
   
 
 - **Local binary**
