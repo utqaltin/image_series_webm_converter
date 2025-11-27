@@ -54,6 +54,19 @@ You have two options:
     ```bash
     sudo apt-get install ffmpeg
     ```
+    
+    - **Arch:**
+
+    ```bash
+    sudo pacman -S ffmpeg
+    ```
+
+    - **Fedora:**
+
+    ```bash
+    sudo dnf install ffmpeg
+    ```
+  
 
 - **Local binary**
 
