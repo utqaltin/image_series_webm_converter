@@ -1,0 +1,14 @@
+# Rust target folder
+/target
+
+# Build artifacts
+**/*.pdb
+**/*.d
+**/*.rlib
+**/*.rmeta
+
+# Executables
+*.exe
+
+# VSCode
+.vscode/
