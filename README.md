@@ -1,41 +1,41 @@
-# Image Series Converter – `render_cli`
+# 🖼️ Image Series Converter – `render_cli`
 
-Small interactive CLI that converts PNG image sequences into **WEBM / MP4 / GIF** using `ffmpeg`.
+Küçük, etkileşimli bir CLI (Komut Satırı Arayüzü) aracıdır. PNG görsel serilerini `ffmpeg` kullanarak **WEBM / MP4 / GIF** formatlarına dönüştürür.
 
-Designed for workflows like Unreal/Blender renders where you export numbered PNG frames (with optional alpha) and want a transparent or cropped video for the web, Tauri apps, etc.
+Unreal/Blender gibi, numaralandırılmış PNG karelerini (isteğe bağlı alfa kanalı ile) dışa aktardığınız ve web, Tauri uygulamaları vb. için şeffaf veya kırpılmış bir videoya ihtiyaç duyduğunuz iş akışları için tasarlanmıştır.
 
-> 💡 The tool is intentionally **interactive**: you run it in a folder with frames and it asks you a few questions (prefix, suffix, FPS, format, crop…), prints the final `ffmpeg` command, runs it, then shows metadata. No need to remember long ffmpeg arguments.
-
----
-
-## Features
-
-- ✅ Converts PNG frame sequences to:
-  - **WEBM (VP9)** – supports transparency (alpha)
-  - **MP4 (H.264)** – standard video, no alpha
-  - **GIF** – 8-bit palette with `palettegen` / `paletteuse`
-- ✅ Accepts **prefix + 4-digit frame + suffix** patterns, e.g.
-  - `S_Film.0000_5p.png`, `S_Film.0001_5p.png`, …
-- ✅ Optional **transparency** for WEBM/GIF
-- ✅ Optional **crop** in `w:h:x:y` format (e.g. `640:520:360:170`)
-- ✅ Shows a **summary** before running and asks for confirmation
-- ✅ Prints the exact `ffmpeg` command it runs (easy to reuse or tweak)
-- ✅ After encoding, runs `ffmpeg -i` to show **output metadata**
-- ✅ Can loop and process multiple sequences in one session
+> 💡 Araç kasıtlı olarak **etkileşimlidir**: Karelerin bulunduğu bir klasörde çalıştırırsınız ve size birkaç soru sorar (ön ek, son ek, FPS, format, kırpma…), son `ffmpeg` komutunu yazdırır, çalıştırır ve ardından çıktıya ait meta verileri gösterir. Uzun `ffmpeg` argümanlarını hatırlamaya gerek kalmaz.
 
 ---
 
-## Requirements
+## Özellikler
+
+- ✅ PNG kare serilerini şunlara dönüştürür:
+    - **WEBM (VP9)** – şeffaflığı (alfa) destekler
+    - **MP4 (H.264)** – standart video, alfa desteği yok
+    - **GIF** – `palettegen` / `paletteuse` ile 8-bit palet oluşturur
+- ✅ **Ön ek + 4 haneli kare numarası + son ek** desenlerini kabul eder, örn:
+    - `S_Film.0000_5p.png`, `S_Film.0001_5p.png`, …
+- ✅ WEBM/GIF için isteğe bağlı **şeffaflık** desteği
+- ✅ `w:h:x:y` formatında isteğe bağlı **kırpma** (örn. `640:520:360:170`)
+- ✅ Çalıştırmadan önce bir **özet** gösterir ve onay ister
+- ✅ Çalıştırdığı tam `ffmpeg` komutunu yazdırır (yeniden kullanım veya ince ayar için kolaylık sağlar)
+- ✅ Kodlamadan sonra, çıktı **meta verilerini** göstermek için `ffmpeg -i` komutunu çalıştırır
+- ✅ Tek bir oturumda döngü yapabilir ve birden fazla seriyi işleyebilir
+
+---
+
+## Gereksinimler
 
 ### 1. ffmpeg
 
-This tool is just a wrapper around `ffmpeg`, so you must have it installed.
+Bu araç, `ffmpeg`'in yalnızca bir sarmalayıcısıdır (wrapper), bu nedenle **mutlaka yüklü olmalıdır**.
 
-You have two options:
+İki seçeneğiniz var:
 
-- **Global install** (recommended)
+- **Global Kurulum** (Önerilen)
 
-  Make sure `ffmpeg` is available in your `PATH`.
+  `ffmpeg`'in `PATH`'inizde bulunabildiğinden emin olun.
 
   - **Windows (winget):**
 
@@ -57,31 +57,31 @@ You have two options:
     
   - **Arch:**
 
-   ```bash
-   sudo pacman -S ffmpeg
-   ```
+    ```bash
+    sudo pacman -S ffmpeg
+    ```
 
   - **Fedora:**
 
-   ```bash
-   sudo dnf install ffmpeg
-   ```
-  
+    ```bash
+    sudo dnf install ffmpeg
+    ```
+    
 
-- **Local binary**
+- **Yerel İkili Dosya** (Local Binary)
 
-  Place `ffmpeg.exe` in the **same folder** as `render_cli.exe`.
+  `ffmpeg.exe` dosyasını `render_cli.exe` ile **aynı klasöre** yerleştirin.
 
-Download page: <https://ffmpeg.org/download.html>
+İndirme sayfası: <https://ffmpeg.org/download.html>
 
 ---
 
-### 2. Rust toolchain (only for building from source)
+### 2. Rust Toolchain (Yalnızca kaynaktan derleme için)
 
-If you want to build the project yourself:
+Projeyi kendiniz derlemek isterseniz:
 
-- Install Rust via <https://rustup.rs>
-- Confirm installation:
+- <https://rustup.rs> aracılığıyla Rust'ı kurun
+- Kurulumu doğrulayın:
 
   ```bash
   rustc --version
