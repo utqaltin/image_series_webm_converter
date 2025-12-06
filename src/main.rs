@@ -1,5 +1,6 @@
 use std::io::{self, Write};
 use std::process::Command;
+use std::fs;
 
 fn main() {
     println!("=== Image Series Converter (ffmpeg wrapper) ===");
@@ -15,10 +16,35 @@ fn main() {
         let prefix = prompt("Enter file prefix (before frame number, e.g. 'S_Film.'): ");
         let suffix = prompt("Enter file suffix (after frame number, e.g. '_5p.png'): ");
 
-        let input_pattern = format!("{}%04d{}", prefix, suffix);
+        // Try to auto-detect zero padding by finding the first matching file
+        let detected_padding = detect_zero_padding(&prefix, &suffix);
+        
+        let padding = if let Some(pad) = detected_padding {
+            println!("→ Detected zero padding: {} digits", pad);
+            let confirm = prompt(&format!("Is this correct? (default y, or enter number of digits): "));
+            let confirm_trimmed = confirm.trim();
+            
+            if confirm_trimmed.is_empty() || confirm_trimmed.to_lowercase().starts_with('y') {
+                pad
+            } else if let Ok(custom_pad) = confirm_trimmed.parse::<usize>() {
+                custom_pad
+            } else {
+                pad
+            }
+        } else {
+            println!("→ Could not auto-detect padding.");
+            let pad_input = prompt("Enter number of digits for zero padding (default 4): ");
+            if pad_input.trim().is_empty() {
+                4
+            } else {
+                pad_input.trim().parse().unwrap_or(4)
+            }
+        };
+
+        let input_pattern = format!("{}%0{}d{}", prefix, padding, suffix);
         println!("→ Using input pattern: {}", input_pattern);
-        println!("  (This expects files like: {}0000{} , {}0001{} , ...)",
-                 prefix, suffix, prefix, suffix);
+        let example_num = "0".repeat(padding);
+        println!("  (This expects files like: {}{}{} , etc.)", prefix, example_num, suffix);
 
         // 2) FPS
         println!("\nStep 2: Frame rate");
@@ -155,6 +181,7 @@ match status {
             let _ = Command::new("ffmpeg")
                 .args(&["-i", &output_file, "-hide_banner"])
                 .status();
+            break; // Exit after successful conversion
         } else {
             eprintln!("\n❌ ffmpeg exited with code {:?}", status.code());
         }
@@ -251,4 +278,28 @@ fn build_gif_args(ff_args: &mut Vec<String>, crop: &Option<String>) {
 
     ff_args.push("-filter_complex".into());
     ff_args.push(filter_complex);
+}
+
+/// Detect zero padding by looking for the first file matching the pattern.
+/// Returns the number of digits found in the first matching file.
+fn detect_zero_padding(prefix: &str, suffix: &str) -> Option<usize> {
+    // Read current directory
+    let entries = fs::read_dir(".").ok()?;
+    
+    for entry in entries.flatten() {
+        if let Some(filename) = entry.file_name().to_str() {
+            // Check if filename matches pattern: starts with prefix and ends with suffix
+            if filename.starts_with(prefix) && filename.ends_with(suffix) {
+                // Extract the middle part (the number)
+                let number_part = &filename[prefix.len()..filename.len() - suffix.len()];
+                
+                // Check if it's all digits
+                if number_part.chars().all(|c| c.is_ascii_digit()) {
+                    return Some(number_part.len());
+                }
+            }
+        }
+    }
+    
+    None
 }
